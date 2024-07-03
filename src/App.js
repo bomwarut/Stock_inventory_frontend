@@ -1,55 +1,90 @@
+import React, { useState, useEffect } from 'react';
 import './App.css';
-import { useState } from 'react';
 
-let user = {
-  name: "wer"
-};
-let content = {};
-let isLoggedIn = false;
+const MyApp = () => {
+  const [stocks, setStocks] = useState([]);
+  useEffect( () => {
+    const getProduct = async () => {
+      try {
+        console.log("getting product...");
+        const response = await fetch(`http://localhost:5077/Product`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        // console.log(await response.json());
+        // Optionally fetch updated data after action
+        return await response.json();
+      } catch (error) {
+        console.error('Error updating stock:', error);
+      }
+    };
 
-const products = [
-  { title: 'Cabbage', id: 1, selected: false },
-  { title: 'Garlic', id: 2, selected: true },
-  { title: 'Apple', id: 3, selected: false },
-];
+    (async ()=>{
+      let products = (await getProduct()).allProduct;
+      let bodyTable = document.querySelector("#body-product")
+      products.forEach(element => {
+        console.log("kuyyyyyyyyyyyy"+element);
+          bodyTable.innerHTML += `<tr><td>${element.product_name}</td></tr>`;
+      });
+    })();
+   
+  }, []);
 
-const listItems = products.map(product =>
-  <li key={product.id} style={{ color: product.selected ? 'green' : 'pink'}}>
-    {product.title}
-  </li>
-);
+  const fetchStocks = async () => {
+    try {
+      const response = await fetch('http://localhost:5077/weatherforecast');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setStocks(data);
+    } catch (error) {
+      console.error('Error fetching stocks:', error);
+    }
+  };
 
-if (isLoggedIn) {
-  content = <MyButton />;
-} else {
-  content = <Ver />;
-}
+  const handleStockAction = async (stockId) => {
+    try {
+      const response = await fetch(`https://localhost:5001/api/updateStock/${stockId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ /* Any payload data if needed */ }),
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      // Optionally fetch updated data after action
+      fetchStocks();
+    } catch (error) {
+      console.error('Error updating stock:', error);
+    }
+  };
 
-function MyButton() {
-  function handleClick() {
-    alert('You clicked me!');
-  }
 
-  return (
-    <button onClick={handleClick} className="select" >I'm a button</button>
-  );
-}
-
-function Ver() {
-  return (
-    <button style={{ color: "red" }}> {user.name}</button >
-  );
-}
-
-export default function MyApp() {
   return (
     <div>
-      <h1>Welcome to my app</h1>
-      <h2>dis play component in react that is create function and return in HTML tag like this:  <MyButton />
-        <Ver /> actually ther are {'<MyButton/>'} and {'<Ver/>'}</h2>
-      <h2>if content result is "{content}"</h2>
-      <h2>list item by map function and if product.selected make it green</h2>
-      {listItems}
+      <h1>Welcome to my Stock App</h1>
+      <table>
+        <thead>
+          <tr key="test111">
+            <th>ID</th>
+      
+          </tr>
+        </thead>
+        <tbody id="body-product">
+     
+       
+        </tbody>
+      </table>
     </div>
   );
-}
+};
+
+export default MyApp;
