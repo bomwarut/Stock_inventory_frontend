@@ -7,12 +7,16 @@
 }
 
 #background {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
   text-align: center;
   font-weight: 400;
   font-size: 18px;
 
   table {
-    box-shadow: 0px 3px 6px #e3e3e3;
+    box-shadow: 0px 3px 6px #f1f1f1;
     border-radius: 10px;
     margin: 40px auto 40px auto;
     padding: 10px;
@@ -21,6 +25,10 @@
       padding: 10px;
       font-weight: 400;
       font-size: 18px;
+    }
+
+    tbody tr:hover{
+      background-color: rgb(238, 238, 238);
     }
 
     td{
